@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'Noto Sans Adlam';
+  src: url('/fonts/noto_sans_adlam_regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans Adlam';
+  src: url('/fonts/noto_sans_adlam_bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-adlam: 'Noto Sans Adlam', sans-serif;
+}
+
+/* Harmattan Theme (Default) */
+[data-theme='harmattan'] {
+  --primary: #D4A574;
+  --primary-dark: #B8860B;
+  --accent: #CD853F;
+}
+
+/* Hivernage Theme */
+[data-theme='hivernage'] {
+  --primary: #4CAF50;
+  --primary-dark: #388E3C;
+  --accent: #42A5F5;
+}
+
+/* Sahel Theme */
+[data-theme='sahel'] {
+  --primary: #F4A460;
+  --primary-dark: #FFD700;
+  --accent: #228B22;
+}
+
+/* Pastoral Theme */
+[data-theme='pastoral'] {
+  --primary: #8D6E63;
+  --primary-dark: #5D4037;
+  --accent: #03A9F4;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@theme {
+  --font-adlam: 'Noto Sans Adlam', sans-serif;
+}
+
+@utility font-adlam {
+  font-family: var(--font-adlam);
+}
+
+@utility safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility acc-primary-bg {
+  background-color: var(--primary);
+  color: white;
+}
+
+@utility acc-primary-text {
+  color: var(--primary);
+}
+
+@utility acc-surface {
+  @apply bg-white dark:bg-gray-800;
+}
+
+@utility acc-text {
+  @apply text-gray-900 dark:text-gray-100;
+}
+
+@utility acc-muted {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+@utility acc-border {
+  @apply border-gray-100 dark:border-gray-700;
+}
+
+@utility acc-accent-bg {
+  background-color: var(--accent);
+}
+
+/* Focus visible ring for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #d97706;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Print styles */
+@media print {
+  nav, button, [class*="sticky"] {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  [class*="dark:bg-gray"] {
+    background: white !important;
+  }
+  [class*="dark:text-"] {
+    color: black !important;
+  }
+}
