@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Clock, Calendar as CalendarIcon, Crown } from 'lucide-react';
+import { Home, Clock, LayoutGrid, Crown } from 'lucide-react';
 import { useSettingsStore } from '../../store/useSettingsStore';
 import { t } from '../../utils/i18n';
 
@@ -9,8 +9,8 @@ export function BottomBar() {
 
     const navigation = [
         { name: t(settings.language, 'nav.home'), path: '/', icon: Home },
+        { name: t(settings.language, 'nav.explore'), path: '/explore', icon: LayoutGrid },
         { name: t(settings.language, 'nav.clock'), path: '/clock', icon: Clock },
-        { name: t(settings.language, 'nav.calendar'), path: '/calendar', icon: CalendarIcon },
         { name: t(settings.language, 'nav.premium'), path: '/premium', icon: Crown },
     ];
 

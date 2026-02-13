@@ -151,7 +151,11 @@ function DashboardScreen() {
             <div
                 className="fixed inset-0 z-50 bg-gray-950 flex items-center justify-center overflow-hidden"
                 style={{ cursor: cursorHidden ? 'none' : 'auto' }}
+                role="button"
+                tabIndex={0}
+                aria-label="Exit screensaver"
                 onClick={() => setScreensaverMode(false)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setScreensaverMode(false); }}
             >
                 {/* Stars */}
                 {stars.map((star, i) => (

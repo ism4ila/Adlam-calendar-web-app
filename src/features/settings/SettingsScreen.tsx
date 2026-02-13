@@ -270,7 +270,7 @@ function SettingsScreen() {
 
                 {/* Info */}
                 <div className="pt-8 text-center text-gray-500 text-sm">
-                    <p>Adlam Calendar Clock Web v0.2.0</p>
+                    <p>Adlam Tech Space Web v0.3.0</p>
                     <p>{t(lang, 'about.credits')}</p>
                 </div>
             </motion.div>

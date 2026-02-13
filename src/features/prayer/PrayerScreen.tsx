@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../../components/ui/Card';
-import { MapPin, Calendar } from 'lucide-react';
+import { MapPin, Calendar, RefreshCw } from 'lucide-react';
 import { fetchPrayerTimesByCity, type PrayerTimesResponse, PRAYER_METHODS } from './services/prayerApi';
 import { DIASPORA_CITIES } from '../../data/diasporaCities';
 import { toAdlamDigits } from '../../utils/adlamDigits';
@@ -23,6 +23,7 @@ function PrayerScreen() {
     const [selectedCity, setSelectedCity] = useState(DIASPORA_CITIES[0]);
     const [prayerData, setPrayerData] = useState<PrayerTimesResponse | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [selectedMethod, setSelectedMethod] = useState(3); // MWL by default
 
     useEffect(() => {
@@ -31,6 +32,7 @@ function PrayerScreen() {
 
     const loadPrayerTimes = async () => {
         setIsLoading(true);
+        setError(null);
         try {
             const data = await fetchPrayerTimesByCity(
                 selectedCity.name,
@@ -38,8 +40,9 @@ function PrayerScreen() {
                 selectedMethod
             );
             setPrayerData(data);
-        } catch (error) {
-            console.error('Failed to load prayer times:', error);
+        } catch (err) {
+            console.error('Failed to load prayer times:', err);
+            setError(t(settings.language, 'prayer.error'));
         } finally {
             setIsLoading(false);
         }
@@ -136,6 +139,21 @@ function PrayerScreen() {
                             <h3 className="text-3xl font-black mb-2">{nextPrayer.label}</h3>
                             <p className="text-5xl font-black font-mono">{formatTime(nextPrayer.time)}</p>
                         </div>
+                    </Card>
+                )}
+
+                {/* Error */}
+                {error && !isLoading && (
+                    <Card className="max-w-md mx-auto text-center">
+                        <div className="text-4xl mb-3">⚠️</div>
+                        <p className="text-red-600 dark:text-red-400 font-semibold mb-4">{error}</p>
+                        <button
+                            onClick={loadPrayerTimes}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500 text-white font-semibold hover:bg-amber-600 transition-colors"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                            {t(settings.language, 'prayer.retry')}
+                        </button>
                     </Card>
                 )}
 

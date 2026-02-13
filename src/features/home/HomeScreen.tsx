@@ -1,22 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import {
     Clock, Calendar, Compass, Keyboard, Grid3x3, GraduationCap,
-    PenTool, FileText, ArrowLeftRight, Download, Smartphone, Share2
+    PenTool, FileText, ArrowLeftRight, Download, Smartphone, Share2,
+    FileEdit, Gamepad2, Calculator, Palette, Type, Languages, Banana
 } from 'lucide-react';
 import { AnalogClock } from '../clock/components/AnalogClock';
 import { useSettingsStore } from '../../store/useSettingsStore';
 import { t, getGreetingKey } from '../../utils/i18n';
 import { toAdlamDigits } from '../../utils/adlamDigits';
 import { useShare } from '../../hooks/useShare';
+import type { LucideIcon } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
     prompt(): Promise<void>;
     userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
+
+interface Feature {
+    name: string;
+    icon: LucideIcon;
+    path: string;
+    color: string;
+    description: string;
+}
+
 
 function HomeScreen() {
     const { settings } = useSettingsStore();
@@ -50,20 +61,53 @@ function HomeScreen() {
     const timeStr = time.toLocaleTimeString(language === 'fr' ? 'fr-FR' : 'en-US', { hour: '2-digit', minute: '2-digit' });
     const displayTime = settings.script === 'adlam' ? toAdlamDigits(timeStr) : timeStr;
 
-    const coreFeatures = [
-        { name: t(language, 'feature.clock.name'), icon: Clock, path: '/clock', color: 'from-amber-500 to-orange-600', description: t(language, 'feature.clock.desc') },
-        { name: t(language, 'feature.calendar.name'), icon: Calendar, path: '/calendar', color: 'from-blue-500 to-cyan-600', description: t(language, 'feature.calendar.desc') },
-        { name: t(language, 'feature.prayer.name'), icon: Compass, path: '/prayer', color: 'from-green-500 to-emerald-600', description: t(language, 'feature.prayer.desc') },
-        { name: t(language, 'feature.learning.name'), icon: GraduationCap, path: '/learning', color: 'from-teal-500 to-cyan-600', description: t(language, 'feature.learning.desc') },
-    ];
-
-    const webFeatures = [
-        { name: t(language, 'feature.editor.name'), icon: PenTool, path: '/editor', color: 'from-violet-500 to-purple-600', description: t(language, 'feature.editor.desc') },
-        { name: t(language, 'feature.prayerpdf.name'), icon: FileText, path: '/prayer-pdf', color: 'from-emerald-500 to-green-600', description: t(language, 'feature.prayerpdf.desc') },
-        { name: t(language, 'feature.converter.name'), icon: ArrowLeftRight, path: '/converter', color: 'from-blue-500 to-indigo-600', description: t(language, 'feature.converter.desc') },
-        { name: t(language, 'feature.keyboard.name'), icon: Keyboard, path: '/keyboard', color: 'from-indigo-500 to-blue-600', description: t(language, 'feature.keyboard.desc') },
-        { name: t(language, 'feature.dashboard.name'), icon: Grid3x3, path: '/dashboard', color: 'from-yellow-500 to-amber-600', description: t(language, 'feature.dashboard.desc') },
-    ];
+    const categoryData: { labelKey: string; color: string; iconColor: string; features: Feature[] }[] = useMemo(() => [
+        {
+            labelKey: 'home.category.time',
+            color: 'from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 border-amber-200 dark:border-amber-800',
+            iconColor: 'text-amber-600',
+            features: [
+                { name: t(language, 'feature.clock.name'), icon: Clock, path: '/clock', color: 'from-amber-500 to-orange-600', description: t(language, 'feature.clock.desc') },
+                { name: t(language, 'feature.calendar.name'), icon: Calendar, path: '/calendar', color: 'from-blue-500 to-cyan-600', description: t(language, 'feature.calendar.desc') },
+                { name: t(language, 'feature.prayer.name'), icon: Compass, path: '/prayer', color: 'from-green-500 to-emerald-600', description: t(language, 'feature.prayer.desc') },
+                { name: t(language, 'feature.converter.name'), icon: ArrowLeftRight, path: '/converter', color: 'from-blue-500 to-indigo-600', description: t(language, 'feature.converter.desc') },
+            ],
+        },
+        {
+            labelKey: 'home.category.writing',
+            color: 'from-violet-50 to-purple-50 dark:from-violet-900/10 dark:to-purple-900/10 border-violet-200 dark:border-violet-800',
+            iconColor: 'text-violet-600',
+            features: [
+                { name: t(language, 'feature.editor.name'), icon: PenTool, path: '/editor', color: 'from-violet-500 to-purple-600', description: t(language, 'feature.editor.desc') },
+                { name: t(language, 'feature.keyboard.name'), icon: Keyboard, path: '/keyboard', color: 'from-indigo-500 to-blue-600', description: t(language, 'feature.keyboard.desc') },
+                { name: t(language, 'feature.word.name'), icon: FileEdit, path: '/word', color: 'from-orange-500 to-red-600', description: t(language, 'feature.word.desc') },
+                { name: t(language, 'feature.translator.name'), icon: Languages, path: '/translator', color: 'from-cyan-500 to-blue-600', description: t(language, 'feature.translator.desc') },
+            ],
+        },
+        {
+            labelKey: 'home.category.learning',
+            color: 'from-teal-50 to-cyan-50 dark:from-teal-900/10 dark:to-cyan-900/10 border-teal-200 dark:border-teal-800',
+            iconColor: 'text-teal-600',
+            features: [
+                { name: t(language, 'feature.learning.name'), icon: GraduationCap, path: '/learning', color: 'from-teal-500 to-cyan-600', description: t(language, 'feature.learning.desc') },
+                { name: t(language, 'feature.games.name'), icon: Gamepad2, path: '/games', color: 'from-lime-500 to-green-600', description: t(language, 'feature.games.desc') },
+                { name: t(language, 'feature.nanobanana.name'), icon: Banana, path: '/nanobanana', color: 'from-yellow-400 to-amber-500', description: t(language, 'feature.nanobanana.desc') },
+            ],
+        },
+        {
+            labelKey: 'home.category.tools',
+            color: 'from-yellow-50 to-amber-50 dark:from-yellow-900/10 dark:to-amber-900/10 border-yellow-200 dark:border-yellow-800',
+            iconColor: 'text-yellow-600',
+            features: [
+                { name: t(language, 'feature.dashboard.name'), icon: Grid3x3, path: '/dashboard', color: 'from-yellow-500 to-amber-600', description: t(language, 'feature.dashboard.desc') },
+                { name: t(language, 'feature.prayerpdf.name'), icon: FileText, path: '/prayer-pdf', color: 'from-emerald-500 to-green-600', description: t(language, 'feature.prayerpdf.desc') },
+                { name: t(language, 'feature.calculator.name'), icon: Calculator, path: '/calculator', color: 'from-sky-500 to-blue-600', description: t(language, 'feature.calculator.desc') },
+                { name: t(language, 'feature.design.name'), icon: Palette, path: '/design', color: 'from-pink-500 to-rose-600', description: t(language, 'feature.design.desc') },
+                { name: t(language, 'feature.socialcards.name'), icon: Share2, path: '/social-cards', color: 'from-fuchsia-500 to-purple-600', description: t(language, 'feature.socialcards.desc') },
+                { name: t(language, 'feature.fonts.name'), icon: Type, path: '/fonts', color: 'from-slate-500 to-gray-600', description: t(language, 'feature.fonts.desc') },
+            ],
+        },
+    ], [language]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -89,10 +133,10 @@ function HomeScreen() {
                                 animate={{ scale: 1 }}
                                 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight"
                             >
-                                ADLAM<br />CLOCK
+                                {t(language, 'home.hero.title')}
                             </motion.h1>
                             <p className="text-xl text-gray-700 dark:text-gray-300 font-medium max-w-md mx-auto lg:mx-0">
-                                {t(language, 'home.tagline')}
+                                {t(language, 'home.hero.tagline')}
                             </p>
                             <div
                                 className="text-4xl md:text-5xl font-black text-amber-600 dark:text-amber-400"
@@ -129,7 +173,7 @@ function HomeScreen() {
                                     variant="ghost"
                                     size="lg"
                                     onClick={() => share({
-                                        title: 'Adlam Calendar Clock',
+                                        title: 'Adlam Tech Space',
                                         text: t(language, 'share.text'),
                                     })}
                                     aria-label={t(language, 'share.title')}
@@ -150,32 +194,45 @@ function HomeScreen() {
                         </motion.div>
                     </div>
 
-                    {/* Core Features */}
-                    <div>
-                        <h2 className="text-3xl font-black text-center mb-8 text-gray-900 dark:text-white">
-                            {t(language, 'home.features.title')}
-                        </h2>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {coreFeatures.map((feature, index) => (
-                                <FeatureCard key={feature.path} feature={feature} index={index} />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Web-Exclusive Tools */}
-                    <div>
-                        <h2 className="text-3xl font-black text-center mb-3 text-gray-900 dark:text-white">
-                            {t(language, 'home.webtools.title')}
-                        </h2>
-                        <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-                            {t(language, 'home.webtools.desc')}
-                        </p>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-                            {webFeatures.map((feature, index) => (
-                                <FeatureCard key={feature.path} feature={feature} index={index + coreFeatures.length} />
-                            ))}
-                        </div>
-                    </div>
+                    {/* Categorized Features */}
+                    {categoryData.map((cat, catIndex) => (
+                        <motion.div
+                            key={cat.labelKey}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: catIndex * 0.1 }}
+                        >
+                            <Card className={`bg-gradient-to-br ${cat.color} border`}>
+                                <h2 className={`text-2xl font-black mb-4 ${cat.iconColor}`}>
+                                    {t(language, cat.labelKey)}
+                                </h2>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {cat.features.map((feature, index) => (
+                                        <motion.div
+                                            key={feature.path}
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: catIndex * 0.1 + index * 0.05 }}
+                                        >
+                                            <Link to={feature.path}>
+                                                <div className="bg-white/70 dark:bg-gray-800/70 rounded-xl p-4 text-center group hover:shadow-md transition-all h-full">
+                                                    <div className={`w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center transform group-hover:scale-110 transition-transform`}>
+                                                        <feature.icon className="w-6 h-6 text-white" />
+                                                    </div>
+                                                    <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-1">
+                                                        {feature.name}
+                                                    </h3>
+                                                    <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                                                        {feature.description}
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </Card>
+                        </motion.div>
+                    ))}
 
                     {/* Play Store Banner */}
                     <Card className="bg-gradient-to-r from-gray-900 to-gray-800 text-white max-w-2xl mx-auto">
@@ -211,30 +268,6 @@ function HomeScreen() {
                 </motion.div>
             </div>
         </div>
-    );
-}
-
-function FeatureCard({ feature, index }: { feature: { name: string; icon: any; path: string; color: string; description: string }; index: number }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.08 }}
-        >
-            <Link to={feature.path}>
-                <Card hover className="h-full text-center group">
-                    <div className={`w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center transform group-hover:scale-110 transition-transform`}>
-                        <feature.icon className="w-7 h-7 text-white" />
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                        {feature.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {feature.description}
-                    </p>
-                </Card>
-            </Link>
-        </motion.div>
     );
 }
 

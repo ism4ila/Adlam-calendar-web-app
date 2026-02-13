@@ -18,10 +18,10 @@ function AboutScreen() {
                 {/* Header */}
                 <div className="text-center space-y-4">
                     <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                        <span className="text-4xl font-black text-white">AC</span>
+                        <span className="text-4xl font-black text-white">AT</span>
                     </div>
                     <h1 className="text-5xl font-black bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent">
-                        Adlam Calendar Clock
+                        Adlam Tech Space
                     </h1>
                     <p className="text-lg text-gray-600 dark:text-gray-400">
                         {t(settings.language, 'about.tagline')}
@@ -113,7 +113,7 @@ function AboutScreen() {
                 <div className="text-center text-sm text-gray-500 dark:text-gray-500 space-y-1">
                     <p>{t(settings.language, 'about.credits')}</p>
                     <p className="font-adlam text-amber-600" dir="rtl">
-                        𞤀𞤣𞤤𞤢𞤥 𞤑𞤢𞤤𞤫𞤲𞤣𞤢𞤪 𞤑𞤤𞤮𞤳
+                        𞤀𞤣𞤤𞤢𞤥 𞤚𞤫𞤳 𞤅𞤨𞤫𞤴𞤧
                     </p>
                 </div>
             </motion.div>

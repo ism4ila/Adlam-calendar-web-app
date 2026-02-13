@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
 import { t } from '../../utils/i18n';
-import { initializePayment } from '../../lib/flutterwave';
+import { initializePayment, CURRENCY_OPTIONS } from '../../lib/cinetpay';
 import {
   Crown,
   Palette,
@@ -17,13 +17,8 @@ import {
   Sparkles,
   Check,
   LogIn,
+  PartyPopper,
 } from 'lucide-react';
-
-const PRICE_OPTIONS = [
-  { amount: 2000, label: '2 000 FCFA' },
-  { amount: 5000, label: '5 000 FCFA' },
-  { amount: 10000, label: '10 000 FCFA' },
-];
 
 const PREMIUM_FEATURES = [
   { icon: Palette, key: 'premium.features.themes' },
@@ -38,16 +33,25 @@ const PREMIUM_FEATURES = [
 function PremiumScreen() {
   const { user, isPremium, premiumSince, signInWithGoogle } = useAuthStore();
   const lang = useSettingsStore((s) => s.settings.language);
-  const [selectedAmount, setSelectedAmount] = useState(5000);
+  const [selectedCurrency, setSelectedCurrency] = useState(0);
+  const [selectedAmountIdx, setSelectedAmountIdx] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [justActivated, setJustActivated] = useState(false);
+
+  const currOpt = CURRENCY_OPTIONS[selectedCurrency];
+  const amount = currOpt.amounts[selectedAmountIdx] ?? currOpt.amounts[1];
 
   const handlePayment = () => {
     if (!user) return;
     setIsProcessing(true);
     initializePayment(
       user,
-      selectedAmount,
-      () => setIsProcessing(false),
+      amount,
+      currOpt.code,
+      () => {
+        setIsProcessing(false);
+        setJustActivated(true);
+      },
       () => setIsProcessing(false)
     );
   };
@@ -72,8 +76,25 @@ function PremiumScreen() {
           </p>
         </div>
 
+        {/* Success animation after payment */}
+        <AnimatePresence>
+          {justActivated && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-none text-center py-8">
+                <PartyPopper className="w-12 h-12 mx-auto mb-3" />
+                <h2 className="text-2xl font-black mb-2">{t(lang, 'premium.badge')}</h2>
+                <p className="text-lg opacity-90">{t(lang, 'premium.thanks')}</p>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Premium badge if already premium */}
-        {isPremium && (
+        {isPremium && !justActivated && (
           <Card className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-none">
             <div className="flex items-center gap-4 p-2">
               <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
@@ -126,21 +147,42 @@ function PremiumScreen() {
             <h2 className="text-xl font-bold text-center">
               {t(lang, 'premium.chooseAmount')}
             </h2>
+
+            {/* Currency selector */}
+            <div>
+              <select
+                value={selectedCurrency}
+                onChange={(e) => {
+                  setSelectedCurrency(Number(e.target.value));
+                  setSelectedAmountIdx(1);
+                }}
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-amber-500 font-semibold"
+              >
+                {CURRENCY_OPTIONS.map((opt, i) => (
+                  <option key={opt.code} value={i}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Amount selector */}
             <div className="grid grid-cols-3 gap-3">
-              {PRICE_OPTIONS.map((opt) => (
+              {currOpt.amounts.map((amt, i) => (
                 <button
-                  key={opt.amount}
-                  onClick={() => setSelectedAmount(opt.amount)}
+                  key={amt}
+                  onClick={() => setSelectedAmountIdx(i)}
                   className={`p-4 rounded-xl border-2 font-bold text-center transition-all ${
-                    selectedAmount === opt.amount
+                    selectedAmountIdx === i
                       ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 shadow-md'
                       : 'border-gray-200 dark:border-gray-700 hover:border-amber-300'
                   }`}
                 >
-                  {opt.label}
+                  {amt.toLocaleString()} {currOpt.code}
                 </button>
               ))}
             </div>
+
             <Button
               variant="primary"
               onClick={handlePayment}

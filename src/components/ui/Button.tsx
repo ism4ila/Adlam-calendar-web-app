@@ -33,10 +33,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 whileTap={{ scale: (disabled || isLoading) ? 1 : 0.98 }}
                 className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
                 disabled={disabled || isLoading}
+                aria-busy={isLoading || undefined}
                 {...props}
             >
                 {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" role="status">
+                            <span className="sr-only">Loading</span>
+                        </div>
+                    </>
                 ) : null}
                 {children}
             </motion.button>

@@ -23,9 +23,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/favicon.svg', 'icons/icon.svg', 'icons/ic_launcher.webp', 'icons/ic_launcher_round.webp', 'fonts/**/*.ttf'],
       manifest: {
-        name: 'Adlam Calendar Clock',
-        short_name: 'AdlamClock',
-        description: 'Cultural companion for time, prayer and learning - Fulani/Adlam',
+        name: 'Adlam Tech Space',
+        short_name: 'AdlamTech',
+        description: 'Your Adlam technology space - time, prayer, writing and learning',
         theme_color: '#d97706',
         background_color: '#1a1a2e',
         display: 'standalone',

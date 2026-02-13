@@ -34,6 +34,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
           email: user.email,
           displayName: user.displayName,
           photoURL: user.photoURL,
+          isPremium: false,
           lastLogin: serverTimestamp(),
         },
         { merge: true }

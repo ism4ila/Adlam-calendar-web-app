@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Layout } from './Layout';
 import { lazy, Suspense } from 'react';
 
@@ -15,6 +15,16 @@ const PrayerPdfScreen = lazy(() => import('../features/prayer-pdf/PrayerPdfScree
 const DateConverterScreen = lazy(() => import('../features/converter/DateConverterScreen'));
 const AboutScreen = lazy(() => import('../features/about/AboutScreen'));
 const PremiumScreen = lazy(() => import('../features/premium/PremiumScreen'));
+const ExploreScreen = lazy(() => import('../features/explore/ExploreScreen'));
+const WordScreen = lazy(() => import('../features/word/WordScreen'));
+const GamesScreen = lazy(() => import('../features/games/GamesScreen'));
+const CalculatorScreen = lazy(() => import('../features/calculator/CalculatorScreen'));
+const DesignStudioScreen = lazy(() => import('../features/design/DesignStudioScreen'));
+const SocialCardsScreen = lazy(() => import('../features/socialcards/SocialCardsScreen'));
+const FontsScreen = lazy(() => import('../features/fonts/FontsScreen'));
+const TranslatorScreen = lazy(() => import('../features/translator/TranslatorScreen'));
+const NanoBananaScreen = lazy(() => import('../features/nanobanana/NanoBananaScreen'));
+const NotFoundScreen = lazy(() => import('../features/notfound/NotFoundScreen'));
 
 const LoadingScreen = () => (
     <div className="flex items-center justify-center min-h-screen">
@@ -39,9 +49,18 @@ export function Router() {
                         <Route path="editor" element={<AdlamEditorScreen />} />
                         <Route path="prayer-pdf" element={<PrayerPdfScreen />} />
                         <Route path="converter" element={<DateConverterScreen />} />
+                        <Route path="explore" element={<ExploreScreen />} />
+                        <Route path="word" element={<WordScreen />} />
+                        <Route path="games" element={<GamesScreen />} />
+                        <Route path="calculator" element={<CalculatorScreen />} />
+                        <Route path="design" element={<DesignStudioScreen />} />
+                        <Route path="social-cards" element={<SocialCardsScreen />} />
+                        <Route path="fonts" element={<FontsScreen />} />
+                        <Route path="translator" element={<TranslatorScreen />} />
+                        <Route path="nanobanana" element={<NanoBananaScreen />} />
                         <Route path="about" element={<AboutScreen />} />
                         <Route path="premium" element={<PremiumScreen />} />
-                        <Route path="*" element={<Navigate to="/" replace />} />
+                        <Route path="*" element={<NotFoundScreen />} />
                     </Route>
                 </Routes>
             </Suspense>
