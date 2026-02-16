@@ -79,7 +79,7 @@ export async function initializePayment(
   window.CinetPay!.waitResponse(async (data) => {
     if (data.status === 'ACCEPTED') {
       try {
-        await updateDoc(doc(db, 'users', user.uid), {
+        await updateDoc(doc(db!, 'users', user.uid), {
           isPremium: true,
           premiumSince: serverTimestamp(),
           paymentRef: transactionId,

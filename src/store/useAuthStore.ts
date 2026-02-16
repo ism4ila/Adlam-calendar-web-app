@@ -25,6 +25,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isLoading: true,
 
   signInWithGoogle: async () => {
+    if (!auth || !db) return;
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 
   signOut: async () => {
+    if (!auth) return;
     try {
       await firebaseSignOut(auth);
       set({ user: null, isPremium: false, premiumSince: null });
@@ -54,6 +56,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 
   listenToAuth: () => {
+    if (!auth || !db) {
+      set({ user: null, isPremium: false, premiumSince: null, isLoading: false });
+      return () => {};
+    }
+
     let unsubFirestore: (() => void) | null = null;
 
     const unsubAuth = onAuthStateChanged(auth, (user) => {
@@ -64,7 +71,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
       if (user) {
         set({ user, isLoading: true });
-        unsubFirestore = onSnapshot(doc(db, 'users', user.uid), (snap) => {
+        unsubFirestore = onSnapshot(doc(db!, 'users', user.uid), (snap) => {
           const data = snap.data();
           set({
             isPremium: data?.isPremium === true,
